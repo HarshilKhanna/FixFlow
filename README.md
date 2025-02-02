@@ -13,7 +13,7 @@ FixFlow is a developer tool that streamlines debugging by linking UI bug identif
 ### **1. Browser Extension**
 1. Clone the repository:  
    ```sh
-   git clone https://github.com/your-repo/fixflow.git
+   git clone (https://github.com/HarshilKhanna/FixFlow.git)
    ```
 2. Open Chrome and navigate to `chrome://extensions/`
 3. Enable **Developer Mode** (toggle in the top right corner)

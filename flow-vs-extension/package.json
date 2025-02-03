@@ -1,0 +1,46 @@
+{
+  "name": "fixflow",
+  "displayName": "FixFlow",
+  "description": "FixFlow - Debug web UI issues by linking browser elements to code",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "fixflow.helloWorld",
+        "title": "Hello World"
+      },
+      {
+        "command": "fixflow.openBug",
+        "title": "FixFlow: Open Bug Location"
+      },
+      {
+        "command": "fixflow.showSidebar",
+        "title": "FixFlow: Show Debug Panel"
+      }
+    ]
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.96.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.19.0"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

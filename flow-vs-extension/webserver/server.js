@@ -1,15 +1,27 @@
-const WebSocket = require("ws");
+const ws = new WebSocket("ws://localhost:5050");
 
-const wss = new WebSocket.Server({ port: 8765 });
+ws.onopen = () => console.log("✅ Connected to FixFlow WebSocket");
 
-wss.on("connection", (ws) => {
-    console.log("FixFlow WebSocket connected");
+document.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
 
-    ws.on("message", (message) => {
-        console.log("Received:", message);
-    });
+    const element = event.target;
 
-    ws.on("close", () => {
-        console.log("FixFlow WebSocket disconnected");
-    });
+    const elementInfo = {
+        tag: element.tagName,
+        id: element.id || null,
+        classes: element.className || null,
+        text: element.innerText || null,
+        styles: window.getComputedStyle(element).cssText || null
+    };
+
+    console.log("🖱️ Element Clicked:", elementInfo);
+
+    if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(elementInfo));
+        console.log("🚀 Sent to VS Code:", elementInfo);
+    } else {
+        console.error("❌ WebSocket not open. Could not send data.");
+    }
 });

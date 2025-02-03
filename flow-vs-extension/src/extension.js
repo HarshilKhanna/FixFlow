@@ -1,38 +1,48 @@
 const vscode = require("vscode");
 const WebSocket = require("ws");
 
-// Start WebSocket server
-const wss = new WebSocket.Server({ port: 8765 });
-
 function activate(context) {
-    console.log("FixFlow extension is activated");
+    console.log("🚀 FixFlow VS Code Extension Activated!");
 
-    let disposable = vscode.commands.registerCommand("fixflow.openBug", (data) => {
-        const filePath = vscode.Uri.file(vscode.workspace.rootPath + "/" + data.file);
-        vscode.workspace.openTextDocument(filePath).then((doc) => {
-            vscode.window.showTextDocument(doc).then((editor) => {
-                let range = new vscode.Range(data.line - 1, 0, data.line - 1, 100);
-                editor.selection = new vscode.Selection(range.start, range.end);
-                vscode.commands.executeCommand("revealLine", { lineNumber: data.line - 1, at: "center" });
-            });
-        });
+    const ws = new WebSocket("ws://localhost:5050");
+
+    ws.onopen = () => console.log("✅ Connected to FixFlow WebSocket");
+
+    ws.onmessage = async (event) => {
+        const elementInfo = JSON.parse(event.data);
+        console.log("📩 Received in VS Code:", elementInfo);
+
+        vscode.window.showInformationMessage("FixFlow: Received element details from browser!");
+
+        const filePath = await findRelevantFile(elementInfo);
+
+        if (filePath) {
+            await openFileAndHighlight(filePath, elementInfo);
+        } else {
+            console.log("⚠️ Could not find the relevant file.");
+        }
+    };
+
+    ws.onclose = () => console.log("❌ WebSocket disconnected");
+
+    let disposable = vscode.commands.registerCommand("fixflow.start", () => {
+        vscode.window.showInformationMessage("FixFlow extension is running!");
     });
 
     context.subscriptions.push(disposable);
-
-    wss.on("connection", (ws) => {
-        ws.on("message", (message) => {
-            let data = JSON.parse(message);
-            vscode.window.showInformationMessage(`FixFlow: Received ${data.selector} at ${data.file}:${data.line}`);
-
-            // Open the file and highlight the line
-            vscode.commands.executeCommand("fixflow.openBug", data);
-        });
-    });
 }
 
-function deactivate() {
-    wss.close();
+async function findRelevantFile(elementInfo) {
+    console.log("🔎 Searching for file related to:", elementInfo);
+    return null; 
 }
+
+async function openFileAndHighlight(filePath, elementInfo) {
+    console.log("📂 Opening file:", filePath);
+    const doc = await vscode.workspace.openTextDocument(filePath);
+    await vscode.window.showTextDocument(doc);
+}
+
+function deactivate() {}
 
 module.exports = { activate, deactivate };
